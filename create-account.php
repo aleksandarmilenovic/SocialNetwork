@@ -7,8 +7,29 @@ if(isset($_POST['createaccount'])){
       $password = $_POST['password'];
       $email = $_POST['email'];
 
-      DB::query('INSERT INTO users VALUES (null,:username,:password,:email)',array(':username' =>$username,':password'=>$password,':email'=>$email));
-      echo "SUCCESS";
+      if (!DB::query('SELECT username FROM users WHERE username=:username', array(':username'=>$username))) {
+                if (strlen($username) >= 3 && strlen($username) <= 32) {
+                        if (preg_match('/[a-zA-Z0-9_]+/', $username)) {
+                                if (strlen($password) >= 6 && strlen($password) <= 60) {
+                                if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                        DB::query('INSERT INTO users VALUES (\'\', :username, :password, :email)', array(':username'=>$username, ':password'=>password_hash($password, PASSWORD_BCRYPT), ':email'=>$email));
+                                        echo "Success!";
+                                } else {
+                                        echo 'Invalid email!';
+                                }
+                        } else {
+                                echo 'Invalid password!';
+                        }
+                        } else {
+                                echo 'Invalid username';
+                        }
+                } else {
+                        echo 'Invalid username';
+                }
+        } else {
+                echo 'User already exists!';
+        }
+
 }
 
  ?>
@@ -16,7 +37,7 @@ if(isset($_POST['createaccount'])){
 <h1>Register</h1>
 <form action="create-account.php" method="post">
   <input type="text" name="username" value="" placeholder="Username ..."><p/>
-  <input type="text" name="password" value="" placeholder="Password ..."><p/>
+  <input type="password" name="password" value="" placeholder="Password ..."><p/>
   <input type="text" name="email" value="" placeholder="someone@somesite.com"><p/>
   <input type="submit" name="createaccount" value="Create Account">
 </form>
