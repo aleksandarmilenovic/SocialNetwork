@@ -4,8 +4,6 @@ include('./classes/Login.php');
 $username = "";
 $verified = False;
 $isFollowing = False;
-$followerid = Login::isLoggedIn();
-  $userid = "";
 if (isset($_GET['username'])) {
         if (DB::query('SELECT username FROM users WHERE username=:username', array(':username'=>$_GET['username']))) {
                 $username = DB::query('SELECT username FROM users WHERE username=:username', array(':username'=>$_GET['username']))[0]['username'];
@@ -40,6 +38,26 @@ if (isset($_GET['username'])) {
                         //echo 'Already following!';
                         $isFollowing = True;
                 }
+
+
+                if(isset($_POST['post'])){
+                    $postbody = $_POST['postbody'];
+                    $userid = Login::isLoggedIn();
+
+                    if(strlen($postbody) > 160 || strlen($postbody)<1){
+                      die('Incorrect length!');
+                    }
+
+                    DB::query('INSERT INTO posts VALUES (\'\',:postbody,NOW(),:userid,0)', array(':postbody' => $postbody,':userid'=>$userid ));
+                }
+
+                $dbpost = DB::query('SELECT * FROM posts WHERE user_id=:userid ORDER BY id DESC', array(':userid' => $userid));
+                $posts = "";
+                foreach ($dbpost as $p) {
+                  $posts .= $p['body']."<hr/></br />";
+                }
+
+
         } else {
                 die('User not found!');
         }
@@ -56,5 +74,14 @@ if (isset($_GET['username'])) {
                 }
         }
         ?>
-
 </form>
+
+<form action="profile.php?username=<?php echo $username; ?>" method="post">
+  <textarea name="postbody" rows="8" cols="80"></textarea>
+  <input type="submit" name="post" value="Post">
+</form>
+
+
+<div class="posts">
+  <?php echo $posts; ?>
+</div>
