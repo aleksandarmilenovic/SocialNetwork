@@ -2,6 +2,7 @@
 include('./classes/DB.php');
 include('./classes/Login.php');
 include('./classes/Post.php');
+include('./classes/Comment.php');
 $showTimeline = False;
 
 
@@ -20,12 +21,16 @@ if (isset($_GET['postid'])) {
   Post::likePost($postId,$userid);
 }
 
+if (isset($_GET['comment'])) {
+  Comment::createComment($_POST['commentbody'],$_GET['comment'],$userid);
+}
+
+
 $followingposts = DB::query('SELECT posts.id,posts.body,posts.likes,users.username FROM users,posts,followers
 WHERE posts.user_id = followers.user_id
 AND users.id = posts.user_id
-AND follower_id=6
-ORDER BY posts.likes DESC
-');
+AND follower_id=:userid
+ORDER BY posts.likes DESC',array(':userid'=>$userid));
 
 
 foreach($followingposts as $post) {
@@ -38,6 +43,14 @@ foreach($followingposts as $post) {
         }
         echo "<span>".$post['likes']." likes</span>
         </form>
+
+        <form action='index.php?comment=".$post['id']."' method='post'>
+        <textarea name='commentbody' rows='3' cols='50'></textarea>
+        <input type='submit' name='comment' value='Comment'>
+        </form>
+          ";
+          Comment::displayComments($post['id']);
+          echo "
         <hr /></br />";
 }
 
