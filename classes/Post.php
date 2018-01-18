@@ -95,23 +95,30 @@ class Post{
 
                 if (!DB::query('SELECT post_id FROM post_likes WHERE post_id=:postid AND user_id=:userid', array(':postid'=>$p['id'], ':userid'=>$loggedInUserId))) {
 
-                        $posts .= "<img src='".$p['postimg']."'>".self::link_add($p['body'])."
-                        <form action='profile.php?username=$username&postid=".$p['id']."' method='post'>
-                                <input type='submit' name='like' value='Like'>
-                                <span>".$p['likes']." likes</span>
-                        </form>
-                        <hr /></br />
-                        ";
-
-                } else {
-                        $posts .= "<img src='".$p['postimg']."'>".self::link_add($p['body'])."
-                        <form action='profile.php?username=$username&postid=".$p['id']."' method='post'>
-                                <input type='submit' name='unlike' value='Unlike'>
-                                <span>".$p['likes']." likes</span>
-                        </form>
-                        <hr /></br />
-                        ";
-                }
+                  $posts .= "<img src='".$p['postimg']."'>".self::link_add($p['body'])."
+                           <form action='profile.php?username=$username&postid=".$p['id']."' method='post'>
+                                   <input type='submit' name='like' value='Like'>
+                                   <span>".$p['likes']." likes</span>
+                           ";
+                           if ($userid == $loggedInUserId) {
+                                   $posts .= "<input type='submit' name='deletepost' value='x' />";
+                           }
+                           $posts .= "
+                           </form><hr /></br />
+                           ";
+                   } else {
+                           $posts .= "<img src='".$p['postimg']."'>".self::link_add($p['body'])."
+                           <form action='profile.php?username=$username&postid=".$p['id']."' method='post'>
+                           <input type='submit' name='unlike' value='Unlike'>
+                           <span>".$p['likes']." likes</span>
+                           ";
+                           if ($userid == $loggedInUserId) {
+                                   $posts .= "<input type='submit' name='deletepost' value='x' />";
+                           }
+                           $posts .= "
+                           </form><hr /></br />
+                           ";
+                   }
         }
         return $posts;
 
