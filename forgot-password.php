@@ -1,14 +1,17 @@
 <?php
 include('./classes/DB.php');
+include('./classes/Mail.php');
+
 if (isset($_POST['resetpassword'])) {
         $cstrong = True;
         $token = bin2hex(openssl_random_pseudo_bytes(64, $cstrong));
         $email = $_POST['email'];
         $user_id = DB::query('SELECT id FROM users WHERE email=:email', array(':email'=>$email))[0]['id'];
         DB::query('INSERT INTO password_tokens VALUES (\'\', :token, :user_id)', array(':token'=>sha1($token), ':user_id'=>$user_id));
-        echo 'Email sent!';
+        Mail::sendMail('Forgot Password!',"<a href ='http://localhost/SocialNetwork/change-password.php?token=$token'>
+        http://localhost/SocialNetwork/change-password.php?token=$token</a>",$email);
         echo '<br />';
-        echo $token;
+      //  echo $token;
 }
 ?>
 <h1>Forgot Password</h1>
