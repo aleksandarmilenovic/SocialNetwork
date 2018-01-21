@@ -13,7 +13,7 @@ if(Login::isLoggedIn()){
 $userid = Login::isLoggedIn();
   $showTimeline = True;
 }else {
-  echo "NOT LOGGED IN";
+  die('NOT LOGGED IN');
 
 }
 
