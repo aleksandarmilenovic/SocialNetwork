@@ -248,6 +248,12 @@ if (isset($_GET['username'])) {
     <script src="assets/js/bs-animation.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.1.1/aos.js"></script>
     <script type="text/javascript">
+
+        function scroollToAnchor(aid){
+          var aTag = $(aid);
+          $('html,body').animate({scrollTop: aTag.offset().top},'slow');
+        }
+
         $(document).ready(function() {
                 $.ajax({
                         type: "GET",
@@ -260,7 +266,7 @@ if (isset($_GET['username'])) {
                                 $.each(posts, function(index) {
                                         $('.timelineposts').html(
                                                 $('.timelineposts').html() +
-                                                '<li class="list-group-item"><blockquote><p>'+posts[index].PostBody+'</p><footer>Posted by '+posts[index].PostedBy+' on '+posts[index].PostDate+'<button class="btn btn-default" type="button" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id=\"'+posts[index].PostId+'\"> <i class="glyphicon glyphicon-heart" data-aos="flip-right"></i><span> '+posts[index].Likes+' Likes</span></button><button class="btn btn-default comment" data-postid=\"'+posts[index].PostId+'\" type="button" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;"><i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span style="color:#f9d616;"> Comments</span></button></footer></blockquote></li>'
+                                                '<li class="list-group-item" id="'+posts[index].PostId+'"><blockquote><p>'+posts[index].PostBody+'</p><footer>Posted by '+posts[index].PostedBy+' on '+posts[index].PostDate+'<button class="btn btn-default" type="button" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;" data-id=\"'+posts[index].PostId+'\"> <i class="glyphicon glyphicon-heart" data-aos="flip-right"></i><span> '+posts[index].Likes+' Likes</span></button><button class="btn btn-default comment" data-postid=\"'+posts[index].PostId+'\" type="button" style="color:#eb3b60;background-image:url(&quot;none&quot;);background-color:transparent;"><i class="glyphicon glyphicon-flash" style="color:#f9d616;"></i><span style="color:#f9d616;"> Comments</span></button></footer></blockquote></li>'
                                         )
                                         $('[data-postid]').click(function() {
                                                 var buttonid = $(this).attr('data-postid');
@@ -297,6 +303,7 @@ if (isset($_GET['username'])) {
                                                 });
                                         })
                                 })
+                                scroollToAnchor(location.hash);
                         },
                         error: function(r) {
                                 console.log(r)
